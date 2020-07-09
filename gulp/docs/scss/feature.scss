@@ -1,0 +1,10 @@
+@import './src/scss/bandaid';
+@import './src/scss/feature';
+
+body {
+	background: color(background);
+	color: color(black);
+	font-family: font(system);
+	overflow-y: overlay;
+	overflow-x: hidden;
+}

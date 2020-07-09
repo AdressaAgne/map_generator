@@ -1,0 +1,130 @@
+@import "./src/scss/bandaid";
+
+$doc-nav-height: u(3);
+$doc-color-primary: salmon;
+$doc-radius: u(1/8);
+
+body {
+	padding-top: $doc-nav-height;
+	font-family: font(system);
+}
+
+nav {
+	height: $doc-nav-height;
+	background: $doc-color-primary;
+	z-index: $z;
+	position: fixed;
+	top: 0;
+	width: 100%;
+
+	a, label {
+		color: color(white);
+		cursor: pointer;
+		display: block;
+		padding: 0 u(1);
+	}
+
+	a {
+		text-decoration: none;
+	}
+
+	> ul {
+		display: flex;
+		flex-direction: row;
+		font-size: u(1.5);
+		line-height: $doc-nav-height;
+		width: 100%;
+
+		> li:last-of-type {
+			margin-left: auto;
+		}
+
+
+		ul {
+			display: flex;
+			font-size: u(7/8);
+			max-width: 0;
+			overflow: hidden;
+			transition: 500ms max-width ease-out;
+
+			span {
+				box-shadow: 0 1px 0 color(white);
+				position: relative;
+				top: 3px;
+				transition: box-shadow 180ms ease-in-out;
+			}
+
+			a:hover span {
+				box-shadow: 0 3px 0 color(white);
+			}
+		}
+
+		label {
+			line-height: $doc-nav-height;
+			display: flex;
+			flex-direction: row;
+		}
+
+		input {
+			position: absolute;
+			opacity: 0;
+		}
+
+		input:focus + ul {
+			max-width: 800px;
+		}
+	}
+}
+
+
+article.doc {
+	margin: u(2) u(8);
+
+	h2 {
+		font-size: u(2.5);
+		margin-top: u(2.5);
+		margin-bottom: u(2.5);
+	}
+
+	h3 {
+		font-size: u(1.5);
+		margin-top: u(2.5);
+		margin-bottom: u(7/8);
+	}
+
+	p {
+		font-size: u(1);
+		line-height: 1.5;
+		margin-top: u(10/8);
+		margin-bottom: u(10/8);
+	}
+
+	ul {
+		font-size: u(1);
+		line-height: 1.5;
+		margin-top: u(10/8);
+		margin-bottom: u(10/8);
+		list-style: disc inside;
+		margin-left: u(1);
+
+		li + li {
+			margin-top: u(1/2);
+		}
+	}
+
+	// Inline code formating
+
+	.code {
+		font-family: monospace;
+
+
+		@at-root article.doc p.code {
+			background: color(white);
+			box-shadow: 0 u(1/4) u(1/2) color(ui-gray);
+			border-radius: $doc-radius;
+			padding: u(7/8) u(10/8);
+			display: inline-block;
+		}
+	}
+}
+

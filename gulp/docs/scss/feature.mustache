@@ -1,0 +1,132 @@
+<style>{{{scss}}}</style>
+
+<article>
+
+	<section class="block">
+		<h1>SCSS bootstrap for feature</h1>
+		<h2>Struktur</h2>
+		<p>Baserer seg på mixins, functions og variabler satt i bandaid.scss</p>
+		<p>{{#code}} Strukturelt bygges disse artiklene opp med
+			<section class="block"></section> inni en<article>.{{/code}}</p>
+		<p>Ofte deler vi opp alt mellom mellomtitler som &lt;section&gt;.</p>
+		<p>Relatert partial: _block.scss</p>
+	</section>
+
+	<section class="block">
+		<h2>Standard typografi</h2>
+		<p>h2, p, ol, ul, li etc er med i pakka.</p>
+		<p>Det ligger ikke inne styling for &lt;h1&gt;, da den stort sett er custom hver gang.</p>
+		<p>Relatert partial: _body-copy.scss</p>
+	</section>
+
+	<section class="block">
+		<h2>Hjelpeklasser</h2>
+		<p><strong>Størrelser:</strong> <code>.mini</code>, small, medium, big og mega. Alle er full bredde minus gutters på mobil, bortsett fra mini, som er liten (og som krever left eller right), og mega, som er full bleed på alle platformer. Max størrelse cappes på 1920px.</p>
+		<p>I tillegg finnes det tilleggsklasser for å kunne styre layout kun på små skjermer. .mobile-mini og .mobile-mega gjør elementet henholdsvis lite eller stort kun for små skjermer.</p>
+		<p><strong>Posisjon:</strong>.left, .right og .center. Gjør det du tror de gjør. Beregnet til å bruke på blokkelementer i artikkelen.</p>
+		<p><strong>Skjulere:</strong> .hide-small og .hide-big skjuler elemenet på henholdsvis små og store skjermer.</p>
+		<p>Relatert partial: _helpers.scss</p>
+	</section>
+
+	<section class="block">
+		<h2>Media</h2>
+		<p>Styling for media-containers, typisk figure.</p>
+		<p>Alle img er 100% bred med vertical-align top for å hindre ekstra luft. video er 100% bred med object-fit satt til cover.</p>
+		<p>Det ligger også inne styling for .ratio som kommer ut i alle videoer vi lager med Awesome Video. Tilgjengelige ratios er .default, .fourbyfive, .fourbythree, .threebyfour og .square</p>
+		<p>Bildetekster settes inni en figcaption. Bildetitler kan settes med span.kicker, og fotograf kan angis med span.credit</p>
+		<p>Relatert partial: _media.scss</p>
+	</section>
+
+	<section class="block">
+		<h2>Sticky block</h2>
+		<p>Man kan gjøre blokker "sticky" ved å legge på klassen .sticky-block. </p>
+		<p>Innheholder css som hensyntar polyfill-biblioteket StickyKit.</p>
+		<p>Sticky-blocks har ofte en figure-tag med tilhørende grafikk som skal sitte fast, og en inner-div som inneholder innholdet som skal scrolles.</p>
+		<p>Avstander inni .inner settes med css-variabelet vph med fallback til vh. Ferdige klasser er .s25, .s50, .s75, .s100 i tillegg til en .scrollock som gjør at elementet er værre å scrolle ut av. </p>
+		<p>Relatert partial: _sticky-block.scss</p>
+	</section>
+
+	<section class="block">
+		<h2>Sticky text</h2>
+		<p>Ferdige stiler for tekst som skal scrolles i en .sticky-block.</p>
+		<p>Elementene spaces med border-bottom, noe som kan gjøre utregning av elementer med viewportChecker kan være vanskelig. Derfor wrappes stor sett alle scrollbare blokkelementer med i en span som igjen brukes til styling.</p>
+		<p>Relatert partial: _sticky-text.scss</p>
+	</section>
+
+	<section class="block">
+		<h2>Variables</h2>
+		<p>Stort sett størrelsesangivelser på tekstbredder.
+		<p>Relatert partial: _variables.scss</p>
+	</section>
+
+	<section class="block">
+		<figure class="media image mega">
+			<img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Marie_Sharp%27s_Hot_Sauces_Belize.jpg">
+			<figcaption><span class="kicker">Mega:</span> Bilde av typen mega. <span class="credit">Wikimedia</span></figcaption>
+		</figure>
+	</section>
+
+	<section class="block">
+		<h2>Awesome sauce</h2>
+		<p>Hot sauce, also known as chili sauce or pepper sauce, is any seasoning, or salsa made from <a href="https://en.wikipedia.org/wiki/Chili_pepper">chili peppers</a> and other ingredients.</p>
+		<p>Many commercial varieties of mass-produced chili sauce exist. Some commercially produced chili sauces are canned, with red tomato that is processed into a pulp used as the primary ingredient. <a href="https://en.wikipedia.org/wiki/H._J._Heinz_Company">The H. J. Heinz Company</a> is one major producer of chili sauces. In the United States, commercially produced chili sauces are assigned various grades per their quality. These grades include U.S. Grade A (also known as U.S. Fancy), U.S. Grade C (also known as U.S. Standard) and Substandard. Criteria in food grading for chili sauces in the U.S. includes coloration, consistency, character, absence of defects and flavor.</p>
+		<figure class="media image mini right">
+			<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Fermented_hot_sauce.jpg/512px-Fermented_hot_sauce.jpg">
+			<figcaption>A fermented hot sauce. (right mini) <span class="credit">Wikimedia</span></figcaption>
+		</figure>
+		<p>Many recipes for hot sauces exist, but the only common ingredient is some variety of chili pepper. Many hot sauces are made by using chili peppers as the base and can be as simple as adding salt and vinegar. Other sauces use some type of fruits or vegetables as the base and add the chili peppers to make them hot. Manufacturers use many different processes from aging in containers to pureeing and cooking the ingredients to achieve a desired flavor. Because of their ratings on the Scoville scale, <a href="https://en.wikipedia.org/wiki/Ghost_pepper">Ghost pepper</a> and <a href="https://en.wikipedia.org/wiki/Habanero_peppers">Habanero peppers</a> are used to make the hotter sauces but additional ingredients are used to add extra heat, such as pure capsaicin extract and mustard oil. Other common ingredients include vinegar and spices. Vinegar is used primarily as a natural preservative, but flavored vinegars can be used to alter the flavour.</p>
+		<p><strong>These are some of the notable companies producing Mexican style hot sauce.</strong></p>
+		<ul>
+			<li>Búfalo: A popular Mexican sauce</li>
+			<li>Cholula Hot Sauce: Known for its iconic round wooden cap</li>
+			<li>Valentina: A traditional Mexican sauce</li>
+		</ul>
+		<figure class="media image big mobile-mega">
+			<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Municipal_S%C3%A3o_Paulo_Market%2C_Brazil.jpg/1023px-Municipal_S%C3%A3o_Paulo_Market%2C_Brazil.jpg">
+			<figcaption>Municipal São Paulo Market, Brazil (big, mobile-mega) <span class="credit">Wikimedia</span></figcaption>
+		</figure>
+		<p>The varieties of peppers that are used often are cayenne, chipotle, habanero and jalapeño. Some hot sauces, notably Tabasco sauce, are aged in wooden casks similar to the preparation of wine and fermented vinegar. Other ingredients, including fruits and vegetables such as raspberries, mangoes, carrots, and chayote squash are sometimes used to add flavor, mellow the heat of the chilis, and thicken the sauce's consistency. Artisan hot sauces are manufactured by smaller producers and private labels in the United States. Their products are produced in smaller quantities in a variety of flavors. Many sauces have a theme to catch consumers attention. A very mild chili sauce is produced by Heinz and other manufacturers, and is frequently found in cookbooks in the U.S. This style chili sauce is based on tomatoes, green and/or red bell peppers, and spices; and contains little chili pepper. This sauce is more akin to tomato ketchup and cocktail sauce than predominantly chili pepper-based sauces.</p>
+	</section>
+
+	<section class="block sticky-block">
+		<figure class="media image mega sticky">
+			<img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Herb_of_chili.jpg">
+		</figure>
+		<div class="inner">
+			<p class="sticky-text s50">
+				<span>
+					Louisiana-style hot sauce contains red chili peppers (tabasco and/or cayenne are the most popular), vinegar and salt. Occasionally xanthan gum or other thickeners are used.
+				</span>
+			</p>
+
+			<p class="sticky-text white-box s50">
+				<span>
+					Louisiana-style hot sauce contains red chili peppers (tabasco and/or cayenne are the most popular), vinegar and salt. Occasionally xanthan gum or other thickeners are used.
+				</span>
+			</p>
+
+			<p class="sticky-text black-box s100">
+				<span>
+					Louisiana-style hot sauce contains red chili peppers (tabasco and/or cayenne are the most popular), vinegar and salt. Occasionally xanthan gum or other thickeners are used.
+				</span>
+			</p>
+
+		</div>
+	</section>
+
+	<section class="block">
+		<h2>Rating</h2>
+		<p>A general way to estimate the heat of a sauce is to look at the ingredients list. Sauces tend to vary in heat based on the kind of peppers used, and the further down the list, the less the amount of pepper.</p>
+		<ol>
+			<li><strong>Tabasco peppers</strong> - Sauces made with tabasco peppers are generally hotter than cayenne pepper sauces. Along with Tabasco, a number of sauces are made using tabasco peppers.</li>
+			<li><strong>Trinidad Moruga Scorpion</strong> - The golf ball-sized chili pepper has a tender fruit-like flavor. According to the New Mexico State University Chile Institute, the Trinidad Scorpion Moruga Blend ranks as high as 2,009,231 SHU on the Scoville scale.</li>
+			<li><strong>Carolina Reaper</strong> - The Carolina Reaper is a super hot pepper which has been described as a roasted sweetness delivering an instant level of heat. Developed by Puckerbutt Founder Ed Currie in Rock Hill, South Carolina, the Carolina Reaper averages over 1.5 million SHU and was awarded the Guinness World Record in November 2013.</li>
+		</ol>
+
+		<figure class="media image medium">
+			<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Bhoot_Jolokia_%28_Ghost_Chili_pepper_%29.jpg/786px-Bhoot_Jolokia_%28_Ghost_Chili_pepper_%29.jpg">
+			<figcaption>The bhut jolokia (Template:Lang-asভূত-জলকীয়া), also known as naga jolokia, naga morich, bih jolokia, ghost pepper, ghost chili pepper, red naga chilli, and ghost chilli is an inter specific hybrid chili pepper cultivated in the Indian states of Assam, Nagaland and Manipur. It grows in the Indian states of Assam, Nagaland, and Manipur. There was initially some confusion and disagreement about whether the bhut jolokia was a Capsicum frutescens or a Capsicum chinense pepper, but DNA tests showed it to be an interspecies hybrid, mostly C. chinense with some C. frutescens genes</figcaption>
+		</figure>
+	</section>
+
+</article>

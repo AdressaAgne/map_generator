@@ -1,0 +1,45 @@
+<article class="doc">
+    <h2>ViewportChecker</h2>
+
+    <h3>Javascript</h3>
+    <p class="code">const ViewportChecker = require('./libs/events/ViewportChecker');</p>
+    <p>Man kan kalle en static function for å skjekke om et element er på skjermen i gang.</p>
+    <p class="code">ViewportChecker.isInViewport(node);</p>
+    <p>Lage en ny ViewportChecker</p>
+    <p class="code">let vp = new ViewportChecker();</p>
+    <p>eller</p>
+    <p class="code">let vp = ViewportChecker.Factory();</p>
+    <p>kan også kombinere Factory med require</p>
+    <p class="code">let vp = require('./libs/events/ViewportChecker').Factory();</p>
+    <p class="code">vp.add(element, callback?, offset?, options?);</p>
+
+    <h3>Element:</h3>
+    <ul>
+        <li>String: CSS selector</li>
+        <li>HTMLElement</li>
+        <li>NodeList</li>
+        <li>Array with any of the abow</li>
+    </ul>
+
+
+    <h3>callback:</h3>
+    <p>deafult ViewportChecker.REVERSE</p>
+    <p>Alternativer for callback function</p>
+    <ul>
+        <li>(element, e) => {// do something}</li>
+        <li>ViewportChecker.BAM</li>
+        <li>ViewportChecker.REVERSE</li>
+        <li>ViewportChecker.INDEX</li>
+    </ul>
+    <h3>Offset:</h3>
+    <p>default 0</p>
+    <p>Integer eller String. Integer: antall pixler, String med %: antall prosent pixler av skjermens høyde.</p>
+
+    <h3>Options:</h3>
+    <ul>
+        <li><strong>reverseOffset</strong>: deafult false, boolean</li>
+        <li><strong>repeat</strong>: deafult true, boolean</li>
+        <li><strong>single</strong>: deafult false, boolean</li>
+        <li><strong>startOffset</strong>: deafult offset, integer/string (100, '40%')</li>
+        <li><strong>endOffset</strong>: deafult offset, integer/string (100, '40%')</li>
+    </ul></article>

@@ -1,0 +1,1 @@
+$env : ( debug : <%= debug %>, url : '<%= url %>', task : '<% task %>' ); @function env($key) { @if map-has-key($env, $key) { @return map-get($env, $key); } @warn "Unknown '#{$key}' in ENV"; @return null; } <%= contents %>

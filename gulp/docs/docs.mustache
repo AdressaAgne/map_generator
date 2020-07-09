@@ -1,0 +1,20 @@
+<nav>
+    <ul>
+        {{#nav}}
+            <li>
+                <label>
+                    {{name}}
+                    <input type="text"/>
+                    <ul>
+                        {{#items}}
+                        <li><a href="/docs/{{&path}}"><span>{{name}}</span></a></li>
+                         {{/items}}
+                    </ul>
+                </label>
+            </li>
+        {{/nav}}
+
+        <!-- <li><a href="/components">Components</a></li> -->
+        <li><a href="/">Back to project</a></li>
+    <ul>
+</nav>
