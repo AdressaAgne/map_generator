@@ -13,6 +13,7 @@ module.exports = class KeyHandler extends Event {
         super();
         
         window.addEventListener('keydown', e => this.emit(this.convertKeyCode(e.keyCode).toLowerCase(), e));
+        window.addEventListener('keyup', e => this.emit(this.convertKeyCode(e.keyCode).toLowerCase()+"-up", e));
     }
 
     static Factory() {

@@ -57,7 +57,7 @@ module.exports = {
     Animate,
     AnimationsLoop
 };
-},{"./libs/functions/Easing":10}],2:[function(require,module,exports){
+},{"./libs/functions/Easing":12}],2:[function(require,module,exports){
 module.exports = class BasicController {
 
     setDrawIndex(index) {
@@ -356,7 +356,6 @@ module.exports = class Chunk extends BasicController {
         this.maxLevelValue = this.levels.reduce((prev, current) => prev + current.weight, 0);
         this.vars = ['coords', 'biome'];
         this.map = this.generateMap();
-        console.log(this.map);
         this.draw();
     }
 
@@ -454,7 +453,7 @@ class App {
 }
 
 new App(document.querySelector('canvas'));
-},{"./game.js":9,"./libs/functions/RequestAnimationFrame":11}],8:[function(require,module,exports){
+},{"./game.js":9,"./libs/functions/RequestAnimationFrame":13}],8:[function(require,module,exports){
 /*
  * A speed-improved perlin and simplex noise algorithms for 2D.
  *
@@ -826,6 +825,7 @@ const {
     AnimationsLoop
 } = require('./Animation');
 const Button = require('./Button');
+const keyHandler = require('./libs/events/KeyHandler').Factory();
 
 let buttons = [];
 
@@ -834,62 +834,637 @@ let buttons = [];
 const paddingV = 20;
 const paddingH = paddingV;
 
-let time = 0;
-
-
+const chunkSize = 32;
+const tileSize = 8;
+const chunkCalcSize = chunkSize * tileSize;
 const Chunk = require('./Objects/Chunk');
-let chunks = [];
 Chunk.seed();
 
-/*
-buttons.push(Button.Factory('Seed', 0, 0, e => {
-
+let renderChuncks = [];
+let chunks = {};
+buttons.push(Button.Factory('new Map', 0, 0, e => {
+    Chunk.seed();
+    chunks = {};
+    renderChuncks = [];
 }));
-*/
 
-let player = {x : 0, y : 0};
+
+
+/**
+ * renderDistance in chucnks
+ */
+const renderDistance = 4;
+const playerAccseleration = 1.5;
+const playerDeceleration = 0.9;
+let player = {
+    dir: {
+        w: false,
+        a: false,
+        d: false,
+        s: false,
+    },
+    coords: {
+        x: 0,
+        y: 0
+    },
+    momentum: {
+        x: 0,
+        y: 0
+    },
+    loop: function () {
+        if (this.dir.a) player.momentum.x += playerAccseleration
+        if (this.dir.d) player.momentum.x -= playerAccseleration
+        if (this.dir.w) player.momentum.y += playerAccseleration
+        if (this.dir.s) player.momentum.y -= playerAccseleration
+
+
+        this.coords.x += this.momentum.x;
+        this.coords.y += this.momentum.y;
+
+        this.momentum.y *= playerDeceleration;
+        if (Math.abs(this.momentum.y) < playerDeceleration) this.momentum.y = 0;
+        this.momentum.x *= playerDeceleration;
+        if (Math.abs(this.momentum.x) < playerDeceleration) this.momentum.x = 0;
+    }
+};
+
+keyHandler.on('a', e => {
+    player.dir.a = true
+});
+keyHandler.on('a-up', e => {
+    player.dir.a = false
+});
+keyHandler.on('d', e => {
+    player.dir.d = true
+});
+keyHandler.on('d-up', e => {
+    player.dir.d = false
+});
+keyHandler.on('w', e => {
+    player.dir.w = true
+});
+keyHandler.on('w-up', e => {
+    player.dir.w = false
+});
+keyHandler.on('s', e => {
+    player.dir.s = true
+});
+keyHandler.on('s-up', e => {
+    player.dir.s = false
+});
+
+const generateChunk = (x, y) => {
+    log('Generating chucnk', x, y);
+    const chunk = new Chunk(x, y, chunkSize, chunkSize, tileSize);
+    chunks[`${x}:${y}`] = chunk;
+    return chunk;
+}
+
+const generateChunks = () => {
+    let playerX = player.coords.x;
+    let playerY = player.coords.y;
+    renderChuncks = [];
+    for (let x = -renderDistance; x < renderDistance; x++) {
+        for (let y = -renderDistance; y < renderDistance; y++) {
+            const chunkX = -(Math.floor(playerX / chunkCalcSize) + x);
+            const chunkY = -(Math.floor(playerY / chunkCalcSize) + y);
+            renderChuncks.push(`${chunkX}:${chunkY}`);
+            if (!chunks[`${chunkX}:${chunkY}`]) {
+                generateChunk(chunkX, chunkY);
+            }
+        }
+    }
+}
+
+
+let grd = null;
 
 module.exports = {
     main: (ctx, w, h) => {
-        const chunkSize = 32;
-        const tileSize = 4;
-        for (let x = 0; x < Math.ceil(w / (chunkSize * tileSize)); x++) {
-            for (let y = 0; y < Math.ceil(h / (chunkSize * tileSize)); y++) {
-                console.log('generating chunk');
-                chunks.push(new Chunk(x, y, chunkSize, chunkSize, tileSize));
-            }
-        }
+        grd = ctx.createRadialGradient(w / 2, h / 2, w / 4, w / 2, h / 2, w / 2);
+        grd.addColorStop(0, "rgba(0, 0, 0, 0)");
+        grd.addColorStop(1, "rgba(0, 0, 0, 1)");
+
+        console.log('generating chunks');
+        generateChunks();
     },
     loop: (ctx, w, h) => {
-        time++;
+        player.loop();
         // background
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 0, w, h);
 
         let drawIndex = 0;
-        const Pencil = (cls, x = 0, y = 0, rotate = 0) => {
-
+        const Pencil = (cls, x = 0, y = 0, offsetX = 0, offsetY = 0) => {
             cls.setDrawIndex(drawIndex++);
-            ctx.drawImage(cls.loop(x, y), x, y);
+            ctx.drawImage(cls.loop(x, y), x + offsetX, y + offsetY);
 
             return cls;
         }
 
         AnimationsLoop();
+        generateChunks();
 
-        for (let i = 0; i < chunks.length; i++) {
-            const chunk = chunks[i];
-            Pencil(chunk, chunk.innerX * chunk.w, chunk.innerY * chunk.h);
+        for (let i = 0; i < renderChuncks.length; i++) {
+            const chunk = chunks[renderChuncks[i]];
+
+            const x = chunk.innerX * chunk.w;
+            const offsetX = player.coords.x;
+
+            const y = chunk.innerY * chunk.h;
+            const offsetY = player.coords.y;
+
+            Pencil(chunk, x, y, offsetX + (w / 2) - (renderDistance * chunkCalcSize / 2), offsetY + (h / 2) - (renderDistance * chunkCalcSize / 2));
         }
+
+
+        // Fill with gradient
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, w, h);
 
         for (let i = 0; i < buttons.length; i++) {
             const button = buttons[i];
             Pencil(button, w - button.w - paddingH, h - (button.h * (i + 1)) - (paddingV * (i + 1)));
         }
 
+
     }
 }
-},{"./Animation":1,"./Button":3,"./Objects/Chunk":6}],10:[function(require,module,exports){
+},{"./Animation":1,"./Button":3,"./Objects/Chunk":6,"./libs/events/KeyHandler":11}],10:[function(require,module,exports){
+/**
+ * Used to manage events in classes
+ */
+const log = console.log;
+
+// set EventArray class _evtContainer
+class Event {
+
+    /**
+     * Event init, define event container
+     * @method constructor
+     */
+    constructor() {
+        this._evtContainer = {};
+
+        this.fireEvent = this.emit.bind(this);
+        this.dispatch = this.emit.bind(this);
+
+        this.addEventListener = this.on.bind(this);
+        this.removeEventListener = this.off.bind(this);
+
+        setTimeout(() => this.fireEvent('load'), 0);
+    }
+
+    /**
+     * Fire an event
+     * @method fireEvent
+     * @param  {String}  evt   [Event name]
+     * @param  {Object}  param [function bind]
+     * @return {void}
+     */
+    emit(evt, param) {
+        // Does the event exist
+        if (!this.has(evt)) return false;
+
+        let events = this.get(evt);
+        events.forEach(callback => {
+            // Call callback functions if it exists
+            if (callback && typeof callback === 'function') {
+                let e = Object.assign((param || {}), {
+                    _type: evt,
+                    _emitter: this.constructor.name,
+                    _off: () => this.delete(evt, callback),
+                    _callback: callback
+                });
+                callback.bind(this)(e);
+            }
+        });
+
+        return this;
+    }
+
+    /**
+     * Set event functions
+     * @method on
+     * @param  {Event}    evts     [event names]
+     * @param  {Function} callback [callback]
+     * @return {this}
+     */
+    on(evts, callback = null) {
+        if (typeof callback !== 'function') throw Error('Callback must be a function');
+
+        let event_array = evts.split(' ');
+        for (let i = 0; i < event_array.length; i++) {
+            const evt = event_array[i];
+
+            this.create(evt).add(evt, callback);
+        }
+        return this;
+    }
+
+
+    /**
+     * Remove event function
+     * @param {String} events
+     * @param {Callback} function
+     */
+    off(evts, callback = null) {
+        let event_array = evts.split(' ');
+        for (let i = 0; i < event_array.length; i++) {
+            const evt = event_array[i];
+            callback !== null ? this.delete(evt, callback) : this.reset(evt);
+        }
+
+    }
+
+    /**
+     * Get an EventContainer
+     * @param {String} evt 
+     */
+    get(evt) {
+        return this._evtContainer[evt];
+    }
+
+    /**
+     * check if event exists
+     * @param {String} evt 
+     */
+    has(evt) {
+        return this.get(evt) !== undefined && this.get(evt) instanceof Map;
+    }
+
+    /**
+     * Add an event to an EventContainer
+     * @param {String} evt 
+     * @param {Function} callback 
+     */
+    add(evt, callback) {
+        this.get(evt).set(callback, callback);
+
+        if (this.get(evt).size > Event.MAX_LISTENERS) {
+            console.warn(`Event ${evt} has more then ${Event.MAX_LISTENERS} listeners. (You can change Event.MAX_LISTENERS)`);
+        }
+
+        return this;
+    }
+
+    /**
+     * Create Event container if it does not exist
+     * @param {String} evt 
+     */
+    create(evt) {
+        if (this.has(evt)) return this;
+
+        this._evtContainer[evt] = new Map();
+
+        return this;
+    }
+
+    /**
+     * Reset an EventContainer to null
+     * @param {String} evt 
+     */
+    reset(evt) {
+        if (!this.has(evt)) return this;
+
+        this._evtContainer[evt] = new Map();
+
+        return this;
+
+    }
+
+    /**
+     * Delete an EventContainer
+     * @param {String} evt 
+     */
+    delete(evt, callback) {
+        if (evt && callback && !this.has(evt) && this.get(evt).has(callback)) return this;
+
+        this.get(evt).delete(callback);
+
+        return this;
+    }
+
+}
+
+
+let max_listeners = 10;
+/**
+ * Define Event vars, and set setters
+ */
+Object.defineProperties(Event, {
+
+    MIN_MAX_LISTENERS: {
+        value: 1,
+        writable: false
+    },
+
+    MAX_LISTENERS: {
+        set(value) {
+            if (typeof value != 'number') throw new Error('Event.MAX_LISTENERS must be typeof Number, got ' + typeof value);
+
+            if (value < Event.MIN_MAX_LISTENERS) throw new Error(`Event.MAX_LISTENERS should be abow ${Event.MIN_MAX_LISTENERS}`);
+
+            max_listeners = value;
+        },
+        get() {
+            return max_listeners;
+        }
+    }
+
+});
+
+/**
+ * Export Event class
+ */
+module.exports = Event;
+},{}],11:[function(require,module,exports){
+/**
+ * Usage:
+ * let keyHandler = require('./libs/events/KeyHandler').Factory();
+ * keyHandler.on('tab a g', e => {
+ *  // code
+ * });
+ */
+
+const Event = require('./Event');
+
+module.exports = class KeyHandler extends Event {
+    constructor() {
+        super();
+        
+        window.addEventListener('keydown', e => this.emit(this.convertKeyCode(e.keyCode).toLowerCase(), e));
+        window.addEventListener('keyup', e => this.emit(this.convertKeyCode(e.keyCode).toLowerCase()+"-up", e));
+    }
+
+    static Factory() {
+        return new KeyHandler();
+    }
+
+    convertKeyCode(key) {
+        const keyCodes = [
+            "",
+            "",
+            "",
+            "CANCEL",
+            "",
+            "",
+            "HELP",
+            "",
+            "BACK_SPACE",
+            "TAB",
+            "",
+            "",
+            "CLEAR",
+            "ENTER",
+            "ENTER_SPECIAL",
+            "",
+            "SHIFT",
+            "CONTROL",
+            "ALT",
+            "PAUSE",
+            "CAPS_LOCK",
+            "KANA",
+            "EISU",
+            "JUNJA",
+            "FINAL",
+            "HANJA",
+            "",
+            "ESCAPE",
+            "CONVERT",
+            "NONCONVERT",
+            "ACCEPT",
+            "MODECHANGE",
+            "SPACE",
+            "PAGE_UP",
+            "PAGE_DOWN",
+            "END",
+            "HOME",
+            "LEFT",
+            "UP",
+            "RIGHT",
+            "DOWN",
+            "SELECT",
+            "PRINT",
+            "EXECUTE",
+            "PRINTSCREEN",
+            "INSERT",
+            "DELETE",
+            "",
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "COLON",
+            "SEMICOLON",
+            "LESS_THAN",
+            "EQUALS",
+            "GREATER_THAN",
+            "QUESTION_MARK",
+            "AT",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J",
+            "K",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "U",
+            "V",
+            "W",
+            "X",
+            "Y",
+            "Z",
+            "OS_KEY",
+            "",
+            "CONTEXT_MENU",
+            "",
+            "SLEEP",
+            "NUMPAD0",
+            "NUMPAD1",
+            "NUMPAD2",
+            "NUMPAD3",
+            "NUMPAD4",
+            "NUMPAD5",
+            "NUMPAD6",
+            "NUMPAD7",
+            "NUMPAD8",
+            "NUMPAD9",
+            "MULTIPLY",
+            "ADD",
+            "SEPARATOR",
+            "SUBTRACT",
+            "DECIMAL",
+            "DIVIDE",
+            "F1",
+            "F2",
+            "F3",
+            "F4",
+            "F5",
+            "F6",
+            "F7",
+            "F8",
+            "F9",
+            "F10",
+            "F11",
+            "F12",
+            "F13",
+            "F14",
+            "F15",
+            "F16",
+            "F17",
+            "F18",
+            "F19",
+            "F20",
+            "F21",
+            "F22",
+            "F23",
+            "F24",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "NUM_LOCK",
+            "SCROLL_LOCK",
+            "WIN_OEM_FJ_JISHO",
+            "WIN_OEM_FJ_MASSHOU",
+            "WIN_OEM_FJ_TOUROKU",
+            "WIN_OEM_FJ_LOYA",
+            "WIN_OEM_FJ_ROYA",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "CIRCUMFLEX",
+            "EXCLAMATION",
+            "DOUBLE_QUOTE",
+            "HASH",
+            "DOLLAR",
+            "PERCENT",
+            "AMPERSAND",
+            "UNDERSCORE",
+            "OPEN_PAREN",
+            "CLOSE_PAREN",
+            "ASTERISK",
+            "PLUS",
+            "PIPE",
+            "HYPHEN_MINUS",
+            "OPEN_CURLY_BRACKET",
+            "CLOSE_CURLY_BRACKET",
+            "TILDE",
+            "",
+            "",
+            "",
+            "",
+            "VOLUME_MUTE",
+            "VOLUME_DOWN",
+            "VOLUME_UP",
+            "",
+            "",
+            "SEMICOLON",
+            "EQUALS",
+            "COMMA",
+            "MINUS",
+            "PERIOD",
+            "SLASH",
+            "BACK_QUOTE",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "OPEN_BRACKET",
+            "BACK_SLASH",
+            "CLOSE_BRACKET",
+            "QUOTE",
+            "",
+            "META",
+            "ALTGR",
+            "",
+            "WIN_ICO_HELP",
+            "WIN_ICO_00",
+            "",
+            "WIN_ICO_CLEAR",
+            "",
+            "",
+            "WIN_OEM_RESET",
+            "WIN_OEM_JUMP",
+            "WIN_OEM_PA1",
+            "WIN_OEM_PA2",
+            "WIN_OEM_PA3",
+            "WIN_OEM_WSCTRL",
+            "WIN_OEM_CUSEL",
+            "WIN_OEM_ATTN",
+            "WIN_OEM_FINISH",
+            "WIN_OEM_COPY",
+            "WIN_OEM_AUTO",
+            "WIN_OEM_ENLW",
+            "WIN_OEM_BACKTAB",
+            "ATTN",
+            "CRSEL",
+            "EXSEL",
+            "EREOF",
+            "PLAY",
+            "ZOOM",
+            "",
+            "PA1",
+            "WIN_OEM_CLEAR",
+            ""
+        ];
+
+        return keyCodes[key] != undefined ? keyCodes[key] : key;
+    }
+}
+},{"./Event":10}],12:[function(require,module,exports){
 /**
  * Usage:
  * const {bounceOut, circInOut, linear} = require('./libs/functions/Easing');
@@ -1054,7 +1629,7 @@ module.exports = {
     },
 
 };
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * Usage:
  * const Animate = require('./libs/functions/Animate');

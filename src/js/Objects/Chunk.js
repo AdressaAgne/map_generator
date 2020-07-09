@@ -58,7 +58,6 @@ module.exports = class Chunk extends BasicController {
         this.maxLevelValue = this.levels.reduce((prev, current) => prev + current.weight, 0);
         this.vars = ['coords', 'biome'];
         this.map = this.generateMap();
-        console.log(this.map);
         this.draw();
     }
 

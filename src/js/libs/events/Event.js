@@ -1,7 +1,7 @@
 /**
  * Used to manage events in classes
  */
-
+const log = console.log;
 
 // set EventArray class _evtContainer
 class Event {
@@ -34,9 +34,7 @@ class Event {
         if (!this.has(evt)) return false;
 
         let events = this.get(evt);
-        for (let i = 0; i < events.length; i++) {
-            const callback = array[i];
-
+        events.forEach(callback => {
             // Call callback functions if it exists
             if (callback && typeof callback === 'function') {
                 let e = Object.assign((param || {}), {
@@ -47,7 +45,7 @@ class Event {
                 });
                 callback.bind(this)(e);
             }
-        };
+        });
 
         return this;
     }
