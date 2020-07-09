@@ -15,7 +15,7 @@ const paddingV = 20;
 const paddingH = paddingV;
 
 const chunkSize = 32;
-const tileSize = 8;
+const tileSize = 6;
 const chunkCalcSize = chunkSize * tileSize;
 const Chunk = require('./Objects/Chunk');
 Chunk.seed();
@@ -33,7 +33,12 @@ buttons.push(Button.Factory('new Map', 0, 0, e => {
 /**
  * renderDistance in chucnks
  */
-const renderDistance = 4;
+const renderDistance = Math.ceil(Math.max(window.innerWidth, window.innerHeight) / chunkCalcSize);
+
+console.log('Render Distance', renderDistance);
+console.log('ChunkSize', chunkSize);
+console.log('TileSize', tileSize);
+
 const playerAccseleration = 1.5;
 const playerDeceleration = 0.9;
 let player = {
@@ -94,7 +99,6 @@ keyHandler.on('s-up', e => {
 });
 
 const generateChunk = (x, y) => {
-    log('Generating chucnk', x, y);
     const chunk = new Chunk(x, y, chunkSize, chunkSize, tileSize);
     chunks[`${x}:${y}`] = chunk;
     return chunk;
@@ -127,6 +131,7 @@ module.exports = {
 
         console.log('generating chunks');
         generateChunks();
+        console.log(chunks);
     },
     loop: (ctx, w, h) => {
         player.loop();
