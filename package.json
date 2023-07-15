@@ -43,10 +43,10 @@
     "gulp-prompt": "^1.2.0",
     "gulp-replace": "^0.5.4",
     "gulp-responsive-images": "0.0.4",
-    "gulp-sass": "^4.0.2",
+    "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-wrap": "^0.14.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^9.0.0",
     "serve-favicon": "^2.5.0",
     "through2": "^3.0.1",
     "vinyl-ftp": "^0.6.1"
